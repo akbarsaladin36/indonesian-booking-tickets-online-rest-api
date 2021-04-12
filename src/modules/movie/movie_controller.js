@@ -1,5 +1,6 @@
 const helper = require('../../helpers/wrapper')
 const movieModel = require('./movie_model')
+// const premiereModel = require('../premiere_location/premiere_model')
 
 module.exports = {
   getAllMovieData: async (req, res) => {
@@ -109,18 +110,30 @@ module.exports = {
   searchNameMovieData: async (req, res) => {
     try {
       // console.log(req.query)
-      let { searchResult } = req.query
-      const result = await movieModel.searchDataName(searchResult)
-      if (result.length > 0) {
-        return helper.response(res, 200, 'The result of this words is:', result)
-      } else {
-        return helper.response(
-          res,
-          404,
-          'The search result is not found. Please try again.',
-          null
-        )
+      const { searchResult, page, limit } = req.query
+      const page1 = parseInt(page)
+      const limit1 = parseInt(limit)
+      const totalData = await movieModel.getDataCount()
+      const totalPage = Math.ceil(totalData / limit1)
+      const offset = page1 * limit1 - limit1
+      const pageInfo = {
+        page1,
+        totalPage,
+        limit1,
+        totalData
       }
+      const result = await movieModel.searchDataName(
+        searchResult,
+        limit1,
+        offset
+      )
+      return helper.response(
+        res,
+        200,
+        'The result of this words is:',
+        result,
+        pageInfo
+      )
     } catch (error) {
       return helper.response(res, 404, 'Bad Request', null)
     }

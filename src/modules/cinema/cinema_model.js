@@ -1,9 +1,9 @@
 const connection = require('../../config/mysql')
 
 module.exports = {
-  getDataPremiere: () => {
+  getDataCinema: () => {
     return new Promise((resolve, reject) => {
-      connection.query('SELECT * FROM premiere_location', (error, result) => {
+      connection.query('SELECT * FROM cinema', (error, result) => {
         if (!error) {
           resolve(result)
         } else {
@@ -12,10 +12,10 @@ module.exports = {
       })
     })
   },
-  getDataPremiereById: (id) => {
+  getDataCinemaById: (id) => {
     return new Promise((resolve, reject) => {
       connection.query(
-        'SELECT * FROM premiere_location WHERE premiere_location_id=?',
+        'SELECT * FROM cinema WHERE cinema_id=?',
         id,
         (error, result) => {
           if (!error) {
@@ -27,29 +27,25 @@ module.exports = {
       )
     })
   },
-  createDataPremiere: (setData) => {
+  createDataCinema: (setData) => {
     return new Promise((resolve, reject) => {
-      connection.query(
-        'INSERT INTO premiere_location SET ?',
-        setData,
-        (error, result) => {
-          if (!error) {
-            const newResult = {
-              id: result.insertId,
-              ...setData
-            }
-            resolve(newResult)
-          } else {
-            reject(new Error(error))
+      connection.query('INSERT INTO cinema SET ?', setData, (error, result) => {
+        if (!error) {
+          const newResult = {
+            id: result.insertId,
+            ...setData
           }
+          resolve(newResult)
+        } else {
+          reject(new Error(error))
         }
-      )
+      })
     })
   },
-  updateDataPremiere: (setData, id) => {
+  updateDataCinema: (setData, id) => {
     return new Promise((resolve, reject) => {
       connection.query(
-        'UPDATE premiere_location SET ? WHERE premiere_location_id=?',
+        'UPDATE cinema SET ? WHERE cinema_id=?',
         [setData, id],
         (error, result) => {
           if (!error) {
@@ -67,10 +63,10 @@ module.exports = {
       )
     })
   },
-  deleteDataPremiere: (id) => {
+  deleteDataCinema: (id) => {
     return new Promise((resolve, reject) => {
       connection.query(
-        'DELETE FROM premiere_location WHERE premiere_location_id=?',
+        'DELETE FROM cinema WHERE cinema_id=?',
         id,
         (error, result) => {
           if (!error) {

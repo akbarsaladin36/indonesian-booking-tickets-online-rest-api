@@ -1,9 +1,9 @@
 const connection = require('../../config/mysql')
 
 module.exports = {
-  getDataPremiere: () => {
+  getDataBooking: () => {
     return new Promise((resolve, reject) => {
-      connection.query('SELECT * FROM premiere_location', (error, result) => {
+      connection.query('SELECT * FROM booking', (error, result) => {
         if (!error) {
           resolve(result)
         } else {
@@ -12,10 +12,10 @@ module.exports = {
       })
     })
   },
-  getDataPremiereById: (id) => {
+  getDataBookingById: (id) => {
     return new Promise((resolve, reject) => {
       connection.query(
-        'SELECT * FROM premiere_location WHERE premiere_location_id=?',
+        'SELECT * FROM booking WHERE booking_id=?',
         id,
         (error, result) => {
           if (!error) {
@@ -23,14 +23,16 @@ module.exports = {
           } else {
             reject(new Error(error))
           }
+          // console.log(result)
+          // console.log(error)
         }
       )
     })
   },
-  createDataPremiere: (setData) => {
+  createDataBooking: (setData) => {
     return new Promise((resolve, reject) => {
       connection.query(
-        'INSERT INTO premiere_location SET ?',
+        'INSERT INTO booking SET ?',
         setData,
         (error, result) => {
           if (!error) {
@@ -42,14 +44,16 @@ module.exports = {
           } else {
             reject(new Error(error))
           }
+          // console.log(result)
+          // console.log(error)
         }
       )
     })
   },
-  updateDataPremiere: (setData, id) => {
+  updateDataBooking: (setData, id) => {
     return new Promise((resolve, reject) => {
       connection.query(
-        'UPDATE premiere_location SET ? WHERE premiere_location_id=?',
+        'UPDATE booking SET ? WHERE booking_id=?',
         [setData, id],
         (error, result) => {
           if (!error) {
@@ -67,10 +71,10 @@ module.exports = {
       )
     })
   },
-  deleteDataPremiere: (id) => {
+  deleteDataBooking: (id) => {
     return new Promise((resolve, reject) => {
       connection.query(
-        'DELETE FROM premiere_location WHERE premiere_location_id=?',
+        'DELETE FROM booking WHERE booking_id=?',
         id,
         (error, result) => {
           if (!error) {
@@ -78,6 +82,8 @@ module.exports = {
           } else {
             reject(new Error(error))
           }
+          // console.log(result)
+          // console.log(error)
         }
       )
     })
