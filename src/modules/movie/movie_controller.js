@@ -5,8 +5,26 @@ const movieModel = require('./movie_model')
 module.exports = {
   getAllMovieData: async (req, res) => {
     try {
-      const result = await movieModel.getAllData()
-      return helper.response(res, 200, 'Success get all of data', result)
+      let { page, limit } = req.query
+      page = parseInt(page)
+      limit = parseInt(limit)
+      const totalData = await movieModel.getDataCount()
+      const totalPage = Math.ceil(totalData / limit)
+      const offset = page * limit - limit
+      const pageInfo = {
+        page,
+        totalPage,
+        limit,
+        totalData
+      }
+      const result = await movieModel.getAllData(limit, offset)
+      return helper.response(
+        res,
+        200,
+        'Success get all of data',
+        result,
+        pageInfo
+      )
     } catch (error) {
       return helper.response(res, 404, 'Bad Request', null)
     }
@@ -83,13 +101,18 @@ module.exports = {
         movie_synopsis: movieSynopsis,
         updated_at: new Date(Date.now())
       }
-      const result = await movieModel.updateOneData(setData, id)
-      return helper.response(
-        res,
-        200,
-        'The data with id is successfuly updated.',
-        result
-      )
+      const result = await movieModel.getOneMovieData(id)
+      if (result.length > 0) {
+        const newResult = await movieModel.updateOneData(setData, id)
+        return helper.response(
+          res,
+          200,
+          'The data with id is successfuly updated.',
+          newResult
+        )
+      } else {
+        return helper.response(res, 400, 'the data with id is not found', null)
+      }
     } catch (error) {
       return helper.response(res, 404, 'Bad Request', null)
     }
@@ -97,9 +120,15 @@ module.exports = {
   deleteOneMovieData: async (req, res) => {
     try {
       const { id } = req.params
-      const result = await movieModel.deleteOneData(id)
+      const result = await movieModel.getOneData(id)
       if (result.length > 0) {
-        return helper.response(res, 200, 'the data with id is deleted.', result)
+        const newResult = await movieModel.deleteOneData(id)
+        return helper.response(
+          res,
+          200,
+          'the data with id is deleted.',
+          newResult
+        )
       } else {
         return helper.response(res, 400, 'the data with id is not found.', null)
       }
@@ -110,7 +139,7 @@ module.exports = {
   searchNameMovieData: async (req, res) => {
     try {
       // console.log(req.query)
-      const { searchResult, page, limit } = req.query
+      const { searchResult, sort, page, limit } = req.query
       const page1 = parseInt(page)
       const limit1 = parseInt(limit)
       const totalData = await movieModel.getDataCount()
@@ -124,16 +153,26 @@ module.exports = {
       }
       const result = await movieModel.searchDataName(
         searchResult,
+        sort,
         limit1,
         offset
       )
-      return helper.response(
-        res,
-        200,
-        'The result of this words is:',
-        result,
-        pageInfo
-      )
+      if (result.length > 0) {
+        return helper.response(
+          res,
+          200,
+          'The result of this words is:',
+          result,
+          pageInfo
+        )
+      } else {
+        return helper.response(
+          res,
+          400,
+          'Your search result is not found. Please try again.',
+          null
+        )
+      }
     } catch (error) {
       return helper.response(res, 404, 'Bad Request', null)
     }

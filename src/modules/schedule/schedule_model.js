@@ -3,13 +3,16 @@ const connection = require('../../config/mysql')
 module.exports = {
   getAllScheduleData: () => {
     return new Promise((resolve, reject) => {
-      connection.query('SELECT * FROM schedule', (error, result) => {
-        if (!error) {
-          resolve(result)
-        } else {
-          reject(new Error(error))
+      connection.query(
+        'SELECT * FROM schedule INNER JOIN cinema ON schedule.cinema_id=cinema.cinema_id',
+        (error, result) => {
+          if (!error) {
+            resolve(result)
+          } else {
+            reject(new Error(error))
+          }
         }
-      })
+      )
     })
   },
   getOneScheduleData: (id) => {
@@ -33,8 +36,17 @@ module.exports = {
         'INSERT INTO schedule SET ?',
         setData,
         (error, result) => {
-          console.log(result)
-          console.log(error)
+          if (!error) {
+            const newResult = {
+              id: result.insertId,
+              ...setData
+            }
+            resolve(newResult)
+          } else {
+            reject(new Error(error))
+          }
+          // console.log(result)
+          // console.log(error)
         }
       )
     })
@@ -45,8 +57,17 @@ module.exports = {
         'UPDATE schedule SET ? WHERE schedule_id=?',
         [setData, id],
         (error, result) => {
-          console.log(result)
-          console.log(error)
+          if (!error) {
+            const newResult = {
+              id: id,
+              ...setData
+            }
+            resolve(newResult)
+          } else {
+            reject(new Error(error))
+          }
+          // console.log(result)
+          // console.log(error)
         }
       )
     })
@@ -57,8 +78,13 @@ module.exports = {
         'DELETE FROM schedule WHERE schedule_id=?',
         id,
         (error, result) => {
-          console.log(result)
-          console.log(error)
+          if (!error) {
+            resolve(result)
+          } else {
+            reject(new Error(error))
+          }
+          // console.log(result)
+          // console.log(error)
         }
       )
     })

@@ -1,10 +1,11 @@
 const connection = require('../../config/mysql')
 
 module.exports = {
-  getAllData: () => {
+  getAllData: (limit, offset) => {
     return new Promise((resolve, reject) => {
       connection.query(
-        'SELECT * FROM movie ORDER BY movie_name ASC, movie_release_date ASC',
+        'SELECT * FROM movie LIMIT ? OFFSET ?',
+        [limit, offset],
         (error, result) => {
           if (!error) {
             resolve(result)
@@ -97,10 +98,10 @@ module.exports = {
       )
     })
   },
-  searchDataName: (searchResult, limit, offset) => {
+  searchDataName: (searchResult, sort, limit, offset) => {
     return new Promise((resolve, reject) => {
       connection.query(
-        'SELECT * FROM movie WHERE movie_name LIKE "%"?"%" LIMIT ? OFFSET ?',
+        `SELECT * FROM movie WHERE movie_name LIKE "%"?"%" ORDER BY ${sort} LIMIT ? OFFSET ?`,
         [searchResult, limit, offset],
         (error, result) => {
           if (!error) {
