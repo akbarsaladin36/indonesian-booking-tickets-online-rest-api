@@ -21,17 +21,17 @@ module.exports = {
         'INSERT INTO booking SET ?',
         setData,
         (error, result) => {
-          // if (!error) {
-          //   const newResult = {
-          //     id: result.insertId,
-          //     ...setData
-          //   }
-          //   resolve(newResult)
-          // } else {
-          //   reject(new Error(error))
-          // }
-          console.log(result)
-          console.log(error)
+          if (!error) {
+            const newResult = {
+              id: result.insertId,
+              ...setData
+            }
+            resolve(newResult)
+          } else {
+            reject(new Error(error))
+          }
+          // console.log(result)
+          // console.log(error)
         }
       )
     })
@@ -42,17 +42,17 @@ module.exports = {
         'INSERT INTO booking_seat SET ?',
         setBookingSeat,
         (error, result) => {
-          // if (!error) {
-          //   const newResult = {
-          //     id: result.insertId,
-          //     ...setBookingSeat
-          //   }
-          //   resolve(newResult)
-          // } else {
-          //   reject(new Error(error))
-          // }
-          console.log(result)
-          console.log(error)
+          if (!error) {
+            const newResult = {
+              id: result.insertId,
+              ...setBookingSeat
+            }
+            resolve(newResult)
+          } else {
+            reject(new Error(error))
+          }
+          // console.log(result)
+          // console.log(error)
         }
       )
     })

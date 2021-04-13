@@ -26,6 +26,7 @@ module.exports = {
         bookingStatus,
         bookingSeatLocation
       } = req.body
+
       const setData = {
         cinema_id: cinemaId,
         booking_ticket: bookingTicket,
