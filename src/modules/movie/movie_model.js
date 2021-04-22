@@ -1,19 +1,15 @@
 const connection = require('../../config/mysql')
 
 module.exports = {
-  getAllData: (limit, offset) => {
+  getAllData: () => {
     return new Promise((resolve, reject) => {
-      connection.query(
-        'SELECT * FROM movie LIMIT ? OFFSET ?',
-        [limit, offset],
-        (error, result) => {
-          if (!error) {
-            resolve(result)
-          } else {
-            reject(new Error(error))
-          }
+      connection.query('SELECT * FROM movie', (error, result) => {
+        if (!error) {
+          resolve(result)
+        } else {
+          reject(new Error(error))
         }
-      )
+      })
     })
   },
   getDataCount: () => {
@@ -68,6 +64,8 @@ module.exports = {
         'UPDATE movie SET ? WHERE movie_id=?',
         [setData, id],
         (error, result) => {
+          // console.log(error)
+          // console.log(result)
           if (!error) {
             const newResult = {
               id: id,

@@ -5,26 +5,8 @@ const movieModel = require('./movie_model')
 module.exports = {
   getAllMovieData: async (req, res) => {
     try {
-      let { page, limit } = req.query
-      page = parseInt(page)
-      limit = parseInt(limit)
-      const totalData = await movieModel.getDataCount()
-      const totalPage = Math.ceil(totalData / limit)
-      const offset = page * limit - limit
-      const pageInfo = {
-        page,
-        totalPage,
-        limit,
-        totalData
-      }
-      const result = await movieModel.getAllData(limit, offset)
-      return helper.response(
-        res,
-        200,
-        'Success get all of data',
-        result,
-        pageInfo
-      )
+      const result = await movieModel.getAllData()
+      return helper.response(res, 200, 'Success get all of data', result)
     } catch (error) {
       return helper.response(res, 404, 'Bad Request', null)
     }
@@ -98,10 +80,9 @@ module.exports = {
         movie_directed_by: movieDirectedBy,
         movie_casts: movieCasts,
         movie_release_date: movieReleaseDate,
-        movie_synopsis: movieSynopsis,
-        updated_at: new Date(Date.now())
+        movie_synopsis: movieSynopsis
       }
-      const result = await movieModel.getOneMovieData(id)
+      const result = await movieModel.getOneData(id)
       if (result.length > 0) {
         const newResult = await movieModel.updateOneData(setData, id)
         return helper.response(
@@ -111,10 +92,10 @@ module.exports = {
           newResult
         )
       } else {
-        return helper.response(res, 400, 'the data with id is not found', null)
+        return helper.response(res, 404, 'the data with id is not found', null)
       }
     } catch (error) {
-      return helper.response(res, 404, 'Bad Request', null)
+      return helper.response(res, 400, 'Bad Request', null)
     }
   },
   deleteOneMovieData: async (req, res) => {
