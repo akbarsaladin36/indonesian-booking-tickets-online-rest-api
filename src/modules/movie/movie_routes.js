@@ -5,14 +5,42 @@ const premiereController = require('../premiere_location/premiere_controller')
 const cinemaController = require('../cinema/cinema_controller')
 const scheduleController = require('../schedule/schedule_controller')
 const bookingController = require('../booking/booking_controller')
+const authMiddleware = require('../../middleware/auth')
+const uploadImage = require('../../middleware/upload')
 
 // Movie Page Website
-router.get('/home', movieController.getAllMovieData)
-router.get('/movie-detail/:id', movieController.getOneMovieData)
+router.get(
+  '/home',
+  authMiddleware.userAuthentication,
+  movieController.getAllMovieData
+)
+router.get(
+  '/movie-detail/:id',
+  authMiddleware.userAuthentication,
+  movieController.getOneMovieData
+)
 router.get('/search', movieController.searchNameMovieData)
-router.post('/home', movieController.createNewMovieData)
-router.patch('/movie-detail/:id', movieController.updateOneMovieData)
-router.delete('/movie-detail/:id', movieController.deleteOneMovieData)
+router.post(
+  '/home',
+  authMiddleware.userAuthentication,
+  authMiddleware.isAdmin,
+  uploadImage,
+  movieController.createNewMovieData
+)
+router.patch(
+  '/movie-detail/:id',
+  authMiddleware.userAuthentication,
+  authMiddleware.isAdmin,
+  uploadImage,
+  movieController.updateOneMovieData
+)
+router.delete(
+  '/movie-detail/:id',
+  authMiddleware.userAuthentication,
+  authMiddleware.isAdmin,
+  uploadImage,
+  movieController.deleteOneMovieData
+)
 
 // Premiere Location
 router.get(
@@ -25,14 +53,20 @@ router.get(
 )
 router.post(
   '/admin/premiere-location',
+  authMiddleware.userAuthentication,
+  authMiddleware.isAdmin,
   premiereController.createPremiereLocation
 )
 router.patch(
   '/admin/premiere-location/:id',
+  authMiddleware.userAuthentication,
+  authMiddleware.isAdmin,
   premiereController.updatePremiereLocation
 )
 router.delete(
   '/admin/premiere-location/:id',
+  authMiddleware.userAuthentication,
+  authMiddleware.isAdmin,
   premiereController.deletePremiereLocation
 )
 

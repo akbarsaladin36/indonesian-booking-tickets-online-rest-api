@@ -20,6 +20,7 @@ app.options('*', cors())
 dotenv.config({ path: '../.env' })
 
 app.use('/api/v1', routerNavigation)
+app.use('/api', express.static('src/uploads'))
 
 app.listen(5000, () => {
   console.log('Server is listening at port 5000.')

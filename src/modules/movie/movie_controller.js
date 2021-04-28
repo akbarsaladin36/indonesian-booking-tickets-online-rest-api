@@ -47,6 +47,7 @@ module.exports = {
         movie_duration: movieDuration,
         movie_directed_by: movieDirectedBy,
         movie_casts: movieCasts,
+        movie_image: req.file ? req.file.filename : '',
         movie_release_date: movieReleaseDate,
         movie_synopsis: movieSynopsis
       }
