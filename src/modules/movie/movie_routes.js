@@ -7,16 +7,19 @@ const scheduleController = require('../schedule/schedule_controller')
 const bookingController = require('../booking/booking_controller')
 const authMiddleware = require('../../middleware/auth')
 const uploadImage = require('../../middleware/upload')
+const redisMiddleware = require('../../middleware/redis')
 
 // Movie Page Website
 router.get(
   '/home',
   authMiddleware.userAuthentication,
+  redisMiddleware.getAllMovieDataRedis,
   movieController.getAllMovieData
 )
 router.get(
   '/movie-detail/:id',
   authMiddleware.userAuthentication,
+  redisMiddleware.getOneMovieDataRedis,
   movieController.getOneMovieData
 )
 router.get(
@@ -29,6 +32,7 @@ router.post(
   authMiddleware.userAuthentication,
   authMiddleware.isAdmin,
   uploadImage,
+  redisMiddleware.clearMovieDataRedis,
   movieController.createNewMovieData
 )
 router.patch(
@@ -36,6 +40,7 @@ router.patch(
   authMiddleware.userAuthentication,
   authMiddleware.isAdmin,
   uploadImage,
+  redisMiddleware.clearMovieDataRedis,
   movieController.updateOneMovieData
 )
 router.delete(
@@ -43,6 +48,7 @@ router.delete(
   authMiddleware.userAuthentication,
   authMiddleware.isAdmin,
   uploadImage,
+  redisMiddleware.clearMovieDataRedis,
   movieController.deleteOneMovieData
 )
 
@@ -62,6 +68,7 @@ router.post(
   authMiddleware.userAuthentication,
   authMiddleware.isAdmin,
   uploadImage,
+  redisMiddleware.clearMovieDataRedis,
   premiereController.createPremiereLocation
 )
 router.patch(
@@ -69,6 +76,7 @@ router.patch(
   authMiddleware.userAuthentication,
   authMiddleware.isAdmin,
   uploadImage,
+  redisMiddleware.clearMovieDataRedis,
   premiereController.updatePremiereLocation
 )
 router.delete(
@@ -76,6 +84,7 @@ router.delete(
   authMiddleware.userAuthentication,
   authMiddleware.isAdmin,
   uploadImage,
+  redisMiddleware.clearMovieDataRedis,
   premiereController.deletePremiereLocation
 )
 
@@ -95,6 +104,7 @@ router.post(
   authMiddleware.userAuthentication,
   authMiddleware.isAdmin,
   uploadImage,
+  redisMiddleware.clearMovieDataRedis,
   cinemaController.createCinemaData
 )
 router.patch(
@@ -102,6 +112,7 @@ router.patch(
   authMiddleware.userAuthentication,
   authMiddleware.isAdmin,
   uploadImage,
+  redisMiddleware.clearMovieDataRedis,
   cinemaController.updateCinemaData
 )
 router.delete(
@@ -109,6 +120,7 @@ router.delete(
   authMiddleware.userAuthentication,
   authMiddleware.isAdmin,
   uploadImage,
+  redisMiddleware.clearMovieDataRedis,
   cinemaController.deleteCinemaData
 )
 
@@ -128,6 +140,7 @@ router.post(
   authMiddleware.userAuthentication,
   authMiddleware.isAdmin,
   uploadImage,
+  redisMiddleware.clearMovieDataRedis,
   scheduleController.createSchedule
 )
 router.patch(
@@ -135,6 +148,7 @@ router.patch(
   authMiddleware.userAuthentication,
   authMiddleware.isAdmin,
   uploadImage,
+  redisMiddleware.clearMovieDataRedis,
   scheduleController.updateSchedule
 )
 router.delete(
@@ -142,6 +156,7 @@ router.delete(
   authMiddleware.userAuthentication,
   authMiddleware.isAdmin,
   uploadImage,
+  redisMiddleware.clearMovieDataRedis,
   scheduleController.deleteSchedule
 )
 

@@ -1,5 +1,5 @@
 const redis = require('redis')
-// const client = redis.createClient()
+const client = redis.createClient()
 const helper = require('../../helpers/wrapper')
 const movieModel = require('./movie_model')
 const fs = require('fs')
@@ -9,6 +9,7 @@ module.exports = {
   getAllMovieData: async (req, res) => {
     try {
       const result = await movieModel.getAllData()
+      client.set('getmovie:all', JSON.stringify(result))
       return helper.response(res, 200, 'Success get all of data', result)
     } catch (error) {
       return helper.response(res, 404, 'Bad Request', null)
@@ -19,6 +20,7 @@ module.exports = {
       const { id } = req.params
       const result = await movieModel.getOneData(id)
       if (result.length > 0) {
+        client.set(`getmovie:${id}`, JSON.stringify(result))
         return helper.response(
           res,
           200,

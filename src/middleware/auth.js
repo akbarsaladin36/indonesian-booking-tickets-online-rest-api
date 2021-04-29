@@ -25,7 +25,7 @@ module.exports = {
   },
 
   isAdmin: (req, res, next) => {
-    console.log('Middleware isAdmin running')
+    // console.log('Middleware isAdmin running')
     console.log(req.decodeToken)
     if (req.decodeToken.user_account_status === 'admin') {
       next()
