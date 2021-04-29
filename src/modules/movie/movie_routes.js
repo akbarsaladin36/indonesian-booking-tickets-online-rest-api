@@ -19,7 +19,11 @@ router.get(
   authMiddleware.userAuthentication,
   movieController.getOneMovieData
 )
-router.get('/search', movieController.searchNameMovieData)
+router.get(
+  '/search',
+  authMiddleware.userAuthentication,
+  movieController.searchNameMovieData
+)
 router.post(
   '/home',
   authMiddleware.userAuthentication,
@@ -45,47 +49,112 @@ router.delete(
 // Premiere Location
 router.get(
   '/admin/premiere-location',
+  authMiddleware.userAuthentication,
   premiereController.getAllPremiereLocation
 )
 router.get(
   '/admin/premiere-location/:id',
+  authMiddleware.userAuthentication,
   premiereController.getOnePremiereLocation
 )
 router.post(
   '/admin/premiere-location',
   authMiddleware.userAuthentication,
   authMiddleware.isAdmin,
+  uploadImage,
   premiereController.createPremiereLocation
 )
 router.patch(
   '/admin/premiere-location/:id',
   authMiddleware.userAuthentication,
   authMiddleware.isAdmin,
+  uploadImage,
   premiereController.updatePremiereLocation
 )
 router.delete(
   '/admin/premiere-location/:id',
   authMiddleware.userAuthentication,
   authMiddleware.isAdmin,
+  uploadImage,
   premiereController.deletePremiereLocation
 )
 
 // Cinema
-router.get('/admin/cinema', cinemaController.getAllCinema)
-router.get('/admin/cinema/:id', cinemaController.getOneCinema)
-router.post('/admin/cinema', cinemaController.createCinemaData)
-router.patch('/admin/cinema/:id', cinemaController.updateCinemaData)
-router.delete('/admin/cinema/:id', cinemaController.deleteCinemaData)
+router.get(
+  '/admin/cinema',
+  authMiddleware.userAuthentication,
+  cinemaController.getAllCinema
+)
+router.get(
+  '/admin/cinema/:id',
+  authMiddleware.userAuthentication,
+  cinemaController.getOneCinema
+)
+router.post(
+  '/admin/cinema',
+  authMiddleware.userAuthentication,
+  authMiddleware.isAdmin,
+  uploadImage,
+  cinemaController.createCinemaData
+)
+router.patch(
+  '/admin/cinema/:id',
+  authMiddleware.userAuthentication,
+  authMiddleware.isAdmin,
+  uploadImage,
+  cinemaController.updateCinemaData
+)
+router.delete(
+  '/admin/cinema/:id',
+  authMiddleware.userAuthentication,
+  authMiddleware.isAdmin,
+  uploadImage,
+  cinemaController.deleteCinemaData
+)
 
 // Schedule
-router.get('/admin/schedule', scheduleController.getAllSchedule)
-router.get('/admin/schedule/:id', scheduleController.getOneSchedule)
-router.post('/admin/schedule', scheduleController.createSchedule)
-router.patch('/admin/schedule/:id', scheduleController.updateSchedule)
-router.delete('/admin/schedule/:id', scheduleController.deleteSchedule)
+router.get(
+  '/admin/schedule',
+  authMiddleware.userAuthentication,
+  scheduleController.getAllSchedule
+)
+router.get(
+  '/admin/schedule/:id',
+  authMiddleware.userAuthentication,
+  scheduleController.getOneSchedule
+)
+router.post(
+  '/admin/schedule',
+  authMiddleware.userAuthentication,
+  authMiddleware.isAdmin,
+  uploadImage,
+  scheduleController.createSchedule
+)
+router.patch(
+  '/admin/schedule/:id',
+  authMiddleware.userAuthentication,
+  authMiddleware.isAdmin,
+  uploadImage,
+  scheduleController.updateSchedule
+)
+router.delete(
+  '/admin/schedule/:id',
+  authMiddleware.userAuthentication,
+  authMiddleware.isAdmin,
+  uploadImage,
+  scheduleController.deleteSchedule
+)
 
 // Booking
-router.get('/booking', bookingController.getBooking)
-router.post('/booking', bookingController.createBooking)
+router.get(
+  '/booking',
+  authMiddleware.userAuthentication,
+  bookingController.getBooking
+)
+router.post(
+  '/booking',
+  authMiddleware.userAuthentication,
+  bookingController.createBooking
+)
 
 module.exports = router

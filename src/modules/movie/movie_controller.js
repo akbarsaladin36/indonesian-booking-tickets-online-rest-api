@@ -1,5 +1,8 @@
+const redis = require('redis')
+// const client = redis.createClient()
 const helper = require('../../helpers/wrapper')
 const movieModel = require('./movie_model')
+const fs = require('fs')
 // const premiereModel = require('../premiere_location/premiere_model')
 
 module.exports = {
@@ -31,7 +34,7 @@ module.exports = {
   },
   createNewMovieData: async (req, res) => {
     try {
-      console.log(req.body)
+      // console.log(req.body)
       const {
         movieName,
         movieGenre,
@@ -80,18 +83,42 @@ module.exports = {
         movie_duration: movieDuration,
         movie_directed_by: movieDirectedBy,
         movie_casts: movieCasts,
+        movie_image: req.file ? req.file.filename : '',
         movie_release_date: movieReleaseDate,
         movie_synopsis: movieSynopsis
       }
       const result = await movieModel.getOneData(id)
       if (result.length > 0) {
-        const newResult = await movieModel.updateOneData(setData, id)
-        return helper.response(
-          res,
-          200,
-          'The data with id is successfuly updated.',
-          newResult
-        )
+        if (result[0].movie_image) {
+          fs.unlink(
+            'src/uploads/' + result[0].movie_image,
+            async function (err) {
+              if (err) {
+                return helper.response(
+                  res,
+                  401,
+                  'the image cannot deleted.',
+                  null
+                )
+              } else {
+                const newResult = await movieModel.updateOneData(setData, id)
+                return helper.response(
+                  res,
+                  200,
+                  'The data with id is successfuly updated.',
+                  newResult
+                )
+              }
+            }
+          )
+        } else {
+          return helper.response(
+            res,
+            401,
+            'the result of data is not found',
+            null
+          )
+        }
       } else {
         return helper.response(res, 404, 'the data with id is not found', null)
       }
@@ -104,13 +131,37 @@ module.exports = {
       const { id } = req.params
       const result = await movieModel.getOneData(id)
       if (result.length > 0) {
-        const newResult = await movieModel.deleteOneData(id)
-        return helper.response(
-          res,
-          200,
-          'the data with id is deleted.',
-          newResult
-        )
+        if (result[0].movie_image) {
+          fs.unlink(
+            'src/uploads/' + result[0].movie_image,
+            async function (err) {
+              if (err) {
+                return helper.response(
+                  res,
+                  401,
+                  'the image cannot deleted.',
+                  null
+                )
+              } else {
+                // console.log('Gambar sudah terhapus.')
+                const newResult = await movieModel.deleteOneData(id)
+                return helper.response(
+                  res,
+                  200,
+                  'the data with id is deleted.',
+                  newResult
+                )
+              }
+            }
+          )
+        } else {
+          return helper.response(
+            res,
+            401,
+            'the result of data is not found',
+            null
+          )
+        }
       } else {
         return helper.response(res, 400, 'the data with id is not found.', null)
       }
