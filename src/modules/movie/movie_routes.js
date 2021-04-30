@@ -8,6 +8,27 @@ const bookingController = require('../booking/booking_controller')
 const authMiddleware = require('../../middleware/auth')
 const uploadImage = require('../../middleware/upload')
 const redisMiddleware = require('../../middleware/redis')
+const userController = require('../auth/auth_controller')
+
+// Users
+router.get(
+  '/profile/:id',
+  authMiddleware.userAuthentication,
+  userController.getUserAccountById
+)
+router.patch(
+  '/profile/:id',
+  authMiddleware.userAuthentication,
+  redisMiddleware.clearMovieDataRedis,
+  userController.updateUserAccount
+)
+
+router.delete(
+  '/profile/id',
+  authMiddleware.userAuthentication,
+  redisMiddleware.clearMovieDataRedis,
+  userController.deleteUserAccount
+)
 
 // Movie Page Website
 router.get(
@@ -67,7 +88,6 @@ router.post(
   '/admin/premiere-location',
   authMiddleware.userAuthentication,
   authMiddleware.isAdmin,
-  uploadImage,
   redisMiddleware.clearMovieDataRedis,
   premiereController.createPremiereLocation
 )
@@ -75,7 +95,6 @@ router.patch(
   '/admin/premiere-location/:id',
   authMiddleware.userAuthentication,
   authMiddleware.isAdmin,
-  uploadImage,
   redisMiddleware.clearMovieDataRedis,
   premiereController.updatePremiereLocation
 )
@@ -83,7 +102,6 @@ router.delete(
   '/admin/premiere-location/:id',
   authMiddleware.userAuthentication,
   authMiddleware.isAdmin,
-  uploadImage,
   redisMiddleware.clearMovieDataRedis,
   premiereController.deletePremiereLocation
 )
@@ -139,7 +157,6 @@ router.post(
   '/admin/schedule',
   authMiddleware.userAuthentication,
   authMiddleware.isAdmin,
-  uploadImage,
   redisMiddleware.clearMovieDataRedis,
   scheduleController.createSchedule
 )
@@ -147,7 +164,6 @@ router.patch(
   '/admin/schedule/:id',
   authMiddleware.userAuthentication,
   authMiddleware.isAdmin,
-  uploadImage,
   redisMiddleware.clearMovieDataRedis,
   scheduleController.updateSchedule
 )
@@ -155,7 +171,6 @@ router.delete(
   '/admin/schedule/:id',
   authMiddleware.userAuthentication,
   authMiddleware.isAdmin,
-  uploadImage,
   redisMiddleware.clearMovieDataRedis,
   scheduleController.deleteSchedule
 )

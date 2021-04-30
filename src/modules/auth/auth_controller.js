@@ -7,13 +7,24 @@ module.exports = {
   registerUserAccount: async (req, res) => {
     try {
       // console.log(req.body)
-      const { userEmail, userName, userPassword, userStatus } = req.body
+      const {
+        userEmail,
+        userName,
+        userFirstName,
+        userLastName,
+        userPassword,
+        userPhoneNumber,
+        userStatus
+      } = req.body
       const salt = bcrypt.genSaltSync(10)
       const encryptPassword = bcrypt.hashSync(userPassword, salt)
       const setData = {
         user_account_email: userEmail,
         user_account_username: userName,
+        user_account_first_name: userFirstName,
+        user_account_last_name: userLastName,
         user_account_password: encryptPassword,
+        user_account_phone_number: userPhoneNumber,
         user_account_status: userStatus
       }
       const checkEmailUser = await authModel.getUserData({
@@ -84,6 +95,88 @@ module.exports = {
       }
     } catch (error) {
       return helper.response(res, 400, 'Bad Request', null)
+    }
+  },
+  getUserAccountById: async (req, res) => {
+    try {
+      const { id } = req.params
+      const result = await authModel.getOneUserData(id)
+      if (result.length > 0) {
+        return helper.response(res, 200, 'Success get users by id', result)
+      } else {
+        return helper.response(
+          res,
+          404,
+          'User data with id is not found.',
+          null
+        )
+      }
+    } catch (error) {
+      return helper.response(res, 404, 'Bad Request', null)
+    }
+  },
+  updateUserAccount: async (req, res) => {
+    try {
+      const { id } = req.params
+      const {
+        userEmail,
+        userName,
+        userFirstName,
+        userLastName,
+        userNewPassword,
+        userConfirmPassword,
+        userPhoneNumber
+      } = req.body
+      const salt = bcrypt.genSaltSync(10)
+      const encryptPassword = bcrypt.hashSync(userNewPassword, salt)
+      const setData = {
+        user_account_email: userEmail,
+        user_account_username: userName,
+        user_account_first_name: userFirstName,
+        user_account_last_name: userLastName,
+        user_account_password: encryptPassword,
+        user_account_phone_number: userPhoneNumber
+      }
+      const result = await authModel.getOneUserData(id)
+      if (result.length > 0) {
+        if (userNewPassword !== userConfirmPassword) {
+          return helper.response(
+            res,
+            400,
+            'The password is not same like confirm password.',
+            null
+          )
+        } else {
+          const newResult = await authModel.updateUserData(setData, id)
+          return helper.response(
+            res,
+            200,
+            'Success updating a profile users',
+            newResult
+          )
+        }
+      }
+    } catch (error) {
+      return helper.response(res, 404, 'Bad Request', null)
+    }
+  },
+  deleteUserAccount: async (req, res) => {
+    try {
+      const { id } = req.params
+      const result = await authModel.getOneUserData(id)
+      if (result.length > 0) {
+        const newResult = await authModel.deleteOneUserData(id)
+        return helper.response(
+          res,
+          200,
+          'the user with id is deleted successfully',
+          newResult
+        )
+      } else {
+        return helper.response(res, 400, 'the user with id is not found.', null)
+      }
+    } catch (error) {
+      return helper.response(res, 404, 'Bad Request', null)
     }
   }
 }
