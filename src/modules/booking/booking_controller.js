@@ -19,7 +19,9 @@ module.exports = {
   createBooking: async (req, res) => {
     try {
       const {
+        userId,
         cinemaId,
+        scheduleId,
         bookingTicket,
         bookingTotalPrice,
         bookingPaymentMethod,
@@ -28,14 +30,15 @@ module.exports = {
       } = req.body
 
       const setData = {
+        user_account_id: userId,
         cinema_id: cinemaId,
+        schedule_id: scheduleId,
         booking_ticket: bookingTicket,
         booking_total_price: bookingTotalPrice,
         booking_payment_method: bookingPaymentMethod,
         booking_status: bookingStatus
       }
       const result = await bookingModel.createDataBooking(setData)
-      console.log(result)
 
       bookingSeatLocation.forEach((element) => {
         const setBookingSeat = {

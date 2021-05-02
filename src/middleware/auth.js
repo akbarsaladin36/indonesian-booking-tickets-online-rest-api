@@ -14,7 +14,6 @@ module.exports = {
         ) {
           return helper.response(res, 403, error.message)
         } else {
-          // console.log(result)
           req.decodeToken = result
           next()
         }
@@ -25,8 +24,6 @@ module.exports = {
   },
 
   isAdmin: (req, res, next) => {
-    // console.log('Middleware isAdmin running')
-    console.log(req.decodeToken)
     if (req.decodeToken.user_account_status === 'admin') {
       next()
     } else {

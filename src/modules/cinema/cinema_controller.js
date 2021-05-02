@@ -1,7 +1,5 @@
 const helper = require('../../helpers/wrapper')
 const cinemaModel = require('./cinema_model')
-// const movieModel = require('../movie/movie_model')
-// const premiereModel = require('../premiere_location/premiere_model')
 
 module.exports = {
   getAllCinema: async (req, res) => {
@@ -33,8 +31,6 @@ module.exports = {
   createCinemaData: async (req, res) => {
     try {
       const { movieId, premiereId, cinemaName, cinemaPrice } = req.body
-      // const movieId = await movieModel.getOneData()
-      // const premiereId = await premiereModel.getDataPremiere()
       const setData = {
         movie_id: movieId,
         premiere_location_id: premiereId,
@@ -56,8 +52,6 @@ module.exports = {
     try {
       const { id } = req.params
       const { movieId, premiereId, cinemaName, cinemaPrice } = req.body
-      // const movieId = await movieModel.getOneData()
-      // const premiereId = await premiereModel.getDataPremiere()
       const setData = {
         movie_id: movieId,
         premiere_location_id: premiereId,

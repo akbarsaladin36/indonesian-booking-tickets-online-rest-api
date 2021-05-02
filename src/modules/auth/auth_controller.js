@@ -2,11 +2,12 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const helper = require('../../helpers/wrapper')
 const authModel = require('../auth/auth_model')
+const nodemailer = require('nodemailer')
+require('dotenv').config()
 
 module.exports = {
   registerUserAccount: async (req, res) => {
     try {
-      // console.log(req.body)
       const {
         userEmail,
         userName,
@@ -25,11 +26,31 @@ module.exports = {
         user_account_last_name: userLastName,
         user_account_password: encryptPassword,
         user_account_phone_number: userPhoneNumber,
-        user_account_status: userStatus
+        user_account_status: userStatus,
+        user_account_verified: 1
       }
+
       const checkEmailUser = await authModel.getUserData({
         user_account_email: userEmail
       })
+
+      const transporter = nodemailer.createTransport({
+        host: 'smtp.gmail.com',
+        port: 587,
+        secure: false,
+        auth: {
+          user: process.env.SMTP_EMAIL,
+          pass: process.env.SMTP_PASSWORD
+        }
+      })
+
+      const mailOptions = {
+        from: '"Tickitz" <adminTickitz.gmail.com>',
+        to: userEmail,
+        subject: 'Tickitz- Activation Email',
+        html: `<b>Click here to activate it.</b><a href=http://localhost:5000/api/v1/tickitz/user-activation/1}>Click!</>`
+      }
+
       if (checkEmailUser.length > 0) {
         return helper.response(
           res,
@@ -38,14 +59,22 @@ module.exports = {
           null
         )
       } else {
-        const result = await authModel.registerUser(setData)
-        delete result.user_account_password
-        return helper.response(
-          res,
-          200,
-          'User is successfully created.',
-          result
-        )
+        await transporter.sendMail(mailOptions, async (error, info) => {
+          if (error) {
+            console.log(error)
+            return helper.response(res, 400, 'Email not send !')
+          } else {
+            console.log('Email have been sent to:' + info.response)
+            const result = await authModel.registerUser(setData)
+            delete result.user_account_password
+            return helper.response(
+              res,
+              200,
+              'User is successfully created.',
+              result
+            )
+          }
+        })
       }
     } catch (error) {
       return helper.response(res, 400, 'Bad Request', null)
@@ -53,12 +82,10 @@ module.exports = {
   },
   loginUserAccount: async (req, res) => {
     try {
-      // console.log(req.body)
       const { userEmail, userPassword } = req.body
       const checkEmailUser = await authModel.getUserData({
         user_account_email: userEmail
       })
-      // console.log(checkEmailUser)
       if (checkEmailUser.length > 0) {
         const checkPassword = bcrypt.compareSync(
           userPassword,

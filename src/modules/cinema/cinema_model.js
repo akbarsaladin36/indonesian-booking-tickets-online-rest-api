@@ -60,8 +60,6 @@ module.exports = {
           } else {
             reject(new Error(error))
           }
-          // console.log(result)
-          // console.log(error)
         }
       )
     })
