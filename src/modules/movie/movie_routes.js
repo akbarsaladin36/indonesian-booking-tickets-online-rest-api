@@ -9,8 +9,12 @@ const authMiddleware = require('../../middleware/auth')
 const uploadImage = require('../../middleware/upload')
 const redisMiddleware = require('../../middleware/redis')
 const userController = require('../auth/auth_controller')
+const dashboardController = require('../dashboard/dashboard_controller')
 
 // Users
+
+router.get('/user-activation/:id', userController.updateUserVerifiedAccount)
+
 router.get(
   '/profile/:id',
   authMiddleware.userAuthentication,
@@ -21,6 +25,13 @@ router.patch(
   authMiddleware.userAuthentication,
   redisMiddleware.clearMovieDataRedis,
   userController.updateUserAccount
+)
+
+router.patch(
+  '/profile/change-password/:id',
+  authMiddleware.userAuthentication,
+  redisMiddleware.clearMovieDataRedis,
+  userController.updateUserPassword
 )
 
 router.delete(
@@ -185,6 +196,15 @@ router.post(
   '/booking',
   authMiddleware.userAuthentication,
   bookingController.createBooking
+)
+
+// Dashboard
+
+router.get(
+  '/dashboard',
+  authMiddleware.userAuthentication,
+  authMiddleware.isAdmin,
+  dashboardController.getDashboardEarningData
 )
 
 module.exports = router

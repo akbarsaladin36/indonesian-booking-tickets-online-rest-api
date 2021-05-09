@@ -112,5 +112,20 @@ module.exports = {
         }
       )
     })
+  },
+  getDataByMonth: (month, limit) => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        'SELECT * FROM movie WHERE MONTH(movie_release_date)=? AND YEAR(movie_release_date) >= YEAR(NOW()) ORDER BY movie_release_date ASC LIMIT ?',
+        [month, limit],
+        (error, result) => {
+          if (!error) {
+            resolve(result)
+          } else {
+            reject(new Error(error))
+          }
+        }
+      )
+    })
   }
 }

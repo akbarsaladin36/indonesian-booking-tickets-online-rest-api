@@ -14,67 +14,67 @@ module.exports = {
         userFirstName,
         userLastName,
         userPassword,
-        userPhoneNumber,
-        userStatus
+        userPhoneNumber
       } = req.body
-      const salt = bcrypt.genSaltSync(10)
-      const encryptPassword = bcrypt.hashSync(userPassword, salt)
-      const setData = {
-        user_account_email: userEmail,
-        user_account_username: userName,
-        user_account_first_name: userFirstName,
-        user_account_last_name: userLastName,
-        user_account_password: encryptPassword,
-        user_account_phone_number: userPhoneNumber,
-        user_account_status: userStatus,
-        user_account_verified: 1
-      }
 
       const checkEmailUser = await authModel.getUserData({
         user_account_email: userEmail
       })
 
-      const transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 587,
-        secure: false,
-        auth: {
-          user: process.env.SMTP_EMAIL,
-          pass: process.env.SMTP_PASSWORD
-        }
-      })
-
-      const mailOptions = {
-        from: '"Tickitz" <adminTickitz.gmail.com>',
-        to: userEmail,
-        subject: 'Tickitz- Activation Email',
-        html: `<b>Click here to activate it.</b><a href=http://localhost:5000/api/v1/tickitz/user-activation/1}>Click!</>`
-      }
-
       if (checkEmailUser.length > 0) {
-        return helper.response(
-          res,
-          403,
-          'Email is exist. Please try again.',
-          null
-        )
+        return helper.response(res, 400, 'Email is exists.please try again')
       } else {
-        await transporter.sendMail(mailOptions, async (error, info) => {
+        const salt = bcrypt.genSaltSync(10)
+        const encryptPassword = bcrypt.hashSync(userPassword, salt)
+        const setData = {
+          user_account_email: userEmail,
+          user_account_username: userName,
+          user_account_first_name: userFirstName,
+          user_account_last_name: userLastName,
+          user_account_password: encryptPassword,
+          user_account_phone_number: userPhoneNumber,
+          user_account_status: 'user'
+        }
+        const result = await authModel.registerUser(setData)
+        delete result.password
+
+        const transporter = nodemailer.createTransport({
+          host: 'smtp.gmail.com',
+          port: 587,
+          secure: false,
+          auth: {
+            user: process.env.SMTP_EMAIL,
+            pass: process.env.SMTP_PASSWORD
+          }
+        })
+
+        const mailOptions = {
+          from: '"Tickitz" <adminTickitz.gmail.com>',
+          to: result.user_account_email,
+          subject: 'Tickitz- Activation Email',
+          html: `<b>Click here to activate it.</b><a href="http://localhost:5000/api/v1/tickitz/user-activation/${result.id}">Click!</>`
+        }
+
+        transporter.sendMail(mailOptions, function (error, info) {
           if (error) {
             console.log(error)
             return helper.response(res, 400, 'Email not send !')
           } else {
             console.log('Email have been sent to:' + info.response)
-            const result = await authModel.registerUser(setData)
-            delete result.user_account_password
             return helper.response(
               res,
               200,
-              'User is successfully created.',
-              result
+              'Email verification is sent. Please check your email.'
             )
           }
         })
+
+        return helper.response(
+          res,
+          200,
+          'User is successfully created.',
+          result
+        )
       }
     } catch (error) {
       return helper.response(res, 400, 'Bad Request', null)
@@ -142,6 +142,20 @@ module.exports = {
       return helper.response(res, 404, 'Bad Request', null)
     }
   },
+
+  updateUserVerifiedAccount: async (req, res) => {
+    try {
+      const { id } = req.params
+      const result = await authModel.updateUserData(
+        { user_account_verified: 1 },
+        id
+      )
+      return helper.response(res, 200, 'Success verified your account', result)
+    } catch (error) {
+      return helper.response(res, 400, 'Bad Request', null)
+    }
+  },
+
   updateUserAccount: async (req, res) => {
     try {
       const { id } = req.params
@@ -150,19 +164,45 @@ module.exports = {
         userName,
         userFirstName,
         userLastName,
-        userNewPassword,
-        userConfirmPassword,
         userPhoneNumber
       } = req.body
-      const salt = bcrypt.genSaltSync(10)
-      const encryptPassword = bcrypt.hashSync(userNewPassword, salt)
       const setData = {
         user_account_email: userEmail,
         user_account_username: userName,
         user_account_first_name: userFirstName,
         user_account_last_name: userLastName,
+        user_account_phone_number: userPhoneNumber,
+        updated_at: new Date(Date.now())
+      }
+      const result = await authModel.getOneUserData(id)
+      if (result.length > 0) {
+        const newResult = await authModel.updateUserData(setData, id)
+        return helper.response(
+          res,
+          200,
+          'Success updating a profile users',
+          newResult
+        )
+      } else {
+        return helper.response(
+          res,
+          400,
+          'Your profile data is not updated. Please try again.'
+        )
+      }
+    } catch (error) {
+      return helper.response(res, 404, 'Bad Request', null)
+    }
+  },
+  updateUserPassword: async (req, res) => {
+    try {
+      const { id } = req.params
+      const { userNewPassword, userConfirmPassword } = req.body
+      const salt = bcrypt.genSaltSync(10)
+      const encryptPassword = bcrypt.hashSync(userNewPassword, salt)
+      const setData = {
         user_account_password: encryptPassword,
-        user_account_phone_number: userPhoneNumber
+        updated_at: new Date(Date.now())
       }
       const result = await authModel.getOneUserData(id)
       if (result.length > 0) {
@@ -175,13 +215,21 @@ module.exports = {
           )
         } else {
           const newResult = await authModel.updateUserData(setData, id)
+          delete newResult.user_account_password
           return helper.response(
             res,
             200,
-            'Success updating a profile users',
+            'Success updating a password users',
             newResult
           )
         }
+      } else {
+        return helper.response(
+          res,
+          400,
+          'The password is not updated. Please try again.',
+          null
+        )
       }
     } catch (error) {
       return helper.response(res, 404, 'Bad Request', null)

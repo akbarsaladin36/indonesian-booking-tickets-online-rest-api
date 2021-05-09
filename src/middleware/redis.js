@@ -8,11 +8,12 @@ module.exports = {
       if (!error && result != null) {
         console.log('data ada di dalam redis')
         const newResult = JSON.parse(result)
+        console.log(newResult)
         return helper.response(
           res,
           200,
           'Success get All of Movie Data.',
-          newResult.data
+          newResult
         )
       } else {
         console.log('data tidak ada di dalam redis.')

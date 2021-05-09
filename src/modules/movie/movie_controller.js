@@ -91,28 +91,27 @@ module.exports = {
       }
       const result = await movieModel.getOneData(id)
       if (result.length > 0) {
-        if (result[0].movie_image) {
-          fs.unlink(
-            'src/uploads/' + result[0].movie_image,
-            async function (err) {
-              if (err) {
-                return helper.response(
-                  res,
-                  401,
-                  'the image cannot deleted.',
-                  null
-                )
-              } else {
-                const newResult = await movieModel.updateOneData(setData, id)
-                return helper.response(
-                  res,
-                  200,
-                  'The data with id is successfuly updated.',
-                  newResult
-                )
-              }
+        const deleteImage = result[0].movie_image
+        const checkIfImageExist = fs.existsSync(`src/uploads/${deleteImage}`)
+        if (checkIfImageExist && deleteImage) {
+          fs.unlink(`src/uploads/${deleteImage}`, async function (err) {
+            if (err) {
+              return helper.response(
+                res,
+                401,
+                'the image cannot deleted.',
+                null
+              )
+            } else {
+              const newResult = await movieModel.updateOneData(setData, id)
+              return helper.response(
+                res,
+                200,
+                'The data with id is successfuly updated.',
+                newResult
+              )
             }
-          )
+          })
         } else {
           return helper.response(
             res,
@@ -133,29 +132,28 @@ module.exports = {
       const { id } = req.params
       const result = await movieModel.getOneData(id)
       if (result.length > 0) {
-        if (result[0].movie_image) {
-          fs.unlink(
-            'src/uploads/' + result[0].movie_image,
-            async function (err) {
-              if (err) {
-                return helper.response(
-                  res,
-                  401,
-                  'the image cannot deleted.',
-                  null
-                )
-              } else {
-                // console.log('Gambar sudah terhapus.')
-                const newResult = await movieModel.deleteOneData(id)
-                return helper.response(
-                  res,
-                  200,
-                  'the data with id is deleted.',
-                  newResult
-                )
-              }
+        const deleteImage = result[0].movie_image
+        const checkIfImageExist = fs.existsSync(`src/uploads/${deleteImage}`)
+        if (checkIfImageExist && deleteImage) {
+          fs.unlink(`src/uploads/${deleteImage}`, async function (err) {
+            if (err) {
+              return helper.response(
+                res,
+                401,
+                'the image cannot deleted.',
+                null
+              )
+            } else {
+              // console.log('Gambar sudah terhapus.')
+              const newResult = await movieModel.deleteOneData(id)
+              return helper.response(
+                res,
+                200,
+                'the data with id is deleted.',
+                newResult
+              )
             }
-          )
+          })
         } else {
           return helper.response(
             res,
@@ -207,6 +205,27 @@ module.exports = {
           'Your search result is not found. Please try again.',
           null
         )
+      }
+    } catch (error) {
+      return helper.response(res, 404, 'Bad Request', null)
+    }
+  },
+  getUpcomingMovieDataByMonth: async (req, res) => {
+    try {
+      let { month, limit } = req.params
+      limit = !limit ? 1000 : parseInt(limit)
+      const result = await movieModel.getDataByMonth(month, limit)
+      if (result.length > 0) {
+        return helper.response(res, 200, result)
+      } else if (result.length === 0) {
+        return helper.response(
+          res,
+          200,
+          'There is no upcoming data for this month',
+          null
+        )
+      } else {
+        return helper.response(res, 400)
       }
     } catch (error) {
       return helper.response(res, 404, 'Bad Request', null)

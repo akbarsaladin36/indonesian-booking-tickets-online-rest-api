@@ -33,13 +33,15 @@ module.exports = {
     try {
       const {
         cinemaId,
-        scheduleDate,
+        scheduleDateStart,
+        scheduleDateEnd,
         scheduleClock,
         scheduleLocation
       } = req.body
       const setData = {
         cinema_id: cinemaId,
-        schedule_date: scheduleDate,
+        schedule_date_start: scheduleDateStart,
+        schedule_date_end: scheduleDateEnd,
         schedule_clock: scheduleClock,
         schedule_location: scheduleLocation
       }
@@ -59,13 +61,15 @@ module.exports = {
       const { id } = req.params
       const {
         cinemaId,
-        scheduleDate,
+        scheduleDateStart,
+        scheduleDateEnd,
         scheduleClock,
         scheduleLocation
       } = req.body
       const setData = {
         cinema_id: cinemaId,
-        schedule_date: scheduleDate,
+        schedule_date_start: scheduleDateStart,
+        schedule_date_end: scheduleDateEnd,
         schedule_clock: scheduleClock,
         schedule_location: scheduleLocation
       }
