@@ -1,10 +1,11 @@
 const connection = require('../../config/mysql')
 
 module.exports = {
-  getDataCinema: () => {
+  getDataCinema: (condition, order, limit, offset) => {
     return new Promise((resolve, reject) => {
       connection.query(
-        'SELECT * FROM cinema INNER JOIN movie ON cinema.movie_id=movie.movie_id INNER JOIN premiere_location ON cinema.premiere_location_id=premiere_location.premiere_location_id',
+        `SELECT * FROM cinema JOIN premiere_location ON cinema.premiere_location_id=premiere_location.premiere_location_id JOIN movie ON cinema.movie_id=movie.movie_id WHERE ${condition} ORDER BY ${order} LIMIT ? OFFSET ?`,
+        [limit, offset],
         (error, result) => {
           if (!error) {
             resolve(result)
@@ -72,6 +73,22 @@ module.exports = {
         (error, result) => {
           if (!error) {
             resolve(result)
+          } else {
+            reject(new Error(error))
+          }
+        }
+      )
+    })
+  },
+  getDataCount: (condition) => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        `SELECT COUNT(*) AS total FROM cinema JOIN premiere_location ON cinema.premiere_location_id=premiere_location.premiere_location_id 
+        JOIN movie ON cinema.movie_id=movie.movie_id
+        WHERE ${condition}`,
+        (error, result) => {
+          if (!error) {
+            resolve(result[0].total)
           } else {
             reject(new Error(error))
           }
