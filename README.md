@@ -1,6 +1,6 @@
-<h1 align="center">ExpressJS - Tickitz Booking Ticket RESTfull API</h1>
+<h1 align="center">ExpressJS - Tickitz Booking Ticket RESTFUL API</h1>
 
-#background_projek. [More about Express](https://en.wikipedia.org/wiki/Express.js)
+This is the API that i created for Tickitz Booking Ticket app. This API is tested by me to make sure this code on API works for project. [More about Express](https://en.wikipedia.org/wiki/Express.js)
 
 ## Built With
 
@@ -23,16 +23,24 @@
 5. Create a database with the name #nama_database, and Import file sql to **phpmyadmin**
 6. Open Postman desktop application or Chrome web app extension that has installed before
 7. Choose HTTP Method and enter request url.(ex. localhost:3000/)
-8. You can see all the end point [here](https://documenter.getpostman.com/view/9852901/TzJoEfvL)
+8. You can see all the end point [here](https://documenter.getpostman.com/view/14780095/TzRLmqcs)
+9. Type `npm run dev` to activated the server.
 
 ## Set up .env file
 
 Open .env file on your favorite code editor, and copy paste this code below :
 
 ```
-DB_HOST=localhost // Database host
+DATABASE_PORT = <YOUR SERVER PORT>
+DATABASE = <YOUR DATABASE NAME>
+DATABASE_HOST = <YOUR DATABASE HOST. EXAMPLE: localhost>
+DATABASE_USER = <YOUR DATABASE USERNAME. EXAMPLE: root>
+DATABASE_PASSWORD = <YOUR DATABASE PASSWORD>
+
+SMTP_EMAIL = <YOUR EMAIL>
+SMTP_PASSWORD = <YOUR PASSWORD>
 ```
 
-## License - untuk project individu
+## License
 
 © [Muhammad Akbar Saladin Siregar](https://github.com/akbarsaladin36/)
