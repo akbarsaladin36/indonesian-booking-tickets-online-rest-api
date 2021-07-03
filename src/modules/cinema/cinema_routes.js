@@ -1,43 +1,28 @@
 const express = require('express')
 const router = express.Router()
-const movieController = require('./movie_controller')
+const cinemaController = require('./cinema_controller')
 const authMiddleware = require('../../middleware/auth')
 const uploadImage = require('../../middleware/upload')
 const redisMiddleware = require('../../middleware/redis')
 
-// Movie Page Website
+// Cinema
 router.get(
   '/',
   authMiddleware.userAuthentication,
-  redisMiddleware.getAllMovieDataRedis,
-  movieController.getAllMovieData
+  cinemaController.getAllCinema
 )
 router.get(
   '/:id',
   authMiddleware.userAuthentication,
-  redisMiddleware.getOneMovieDataRedis,
-  movieController.getOneMovieData
+  cinemaController.getOneCinema
 )
-
-router.get(
-  '/search-movie/search',
-  authMiddleware.userAuthentication,
-  movieController.searchMovieData
-)
-
-router.get(
-  '/upcoming-movie/:month',
-  authMiddleware.userAuthentication,
-  movieController.getUpcomingMovieDataByMonth
-)
-
 router.post(
   '/admin',
   authMiddleware.userAuthentication,
   authMiddleware.isAdmin,
   uploadImage,
   redisMiddleware.clearMovieDataRedis,
-  movieController.createNewMovieData
+  cinemaController.createCinemaData
 )
 router.patch(
   '/admin/:id',
@@ -45,7 +30,7 @@ router.patch(
   authMiddleware.isAdmin,
   uploadImage,
   redisMiddleware.clearMovieDataRedis,
-  movieController.updateOneMovieData
+  cinemaController.updateCinemaData
 )
 router.delete(
   '/admin/:id',
@@ -53,7 +38,7 @@ router.delete(
   authMiddleware.isAdmin,
   uploadImage,
   redisMiddleware.clearMovieDataRedis,
-  movieController.deleteOneMovieData
+  cinemaController.deleteCinemaData
 )
 
 module.exports = router

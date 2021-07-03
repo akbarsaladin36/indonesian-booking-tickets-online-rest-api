@@ -12,23 +12,23 @@ module.exports = {
         movie = '',
         order = 'cinema_id ASC',
         page = '1',
-        limit = '6'
+        limit = '100'
       } = req.query
 
       let queryCondition
       if (premiereLocation && movie) {
-        queryCondition = `premiere_location_city LIKE "%${premiereLocation}%" AND movie_name LIKE "%${movie}%"`
+        queryCondition = `premiere_location.premiere_location_city LIKE "%${premiereLocation}%" AND movie.movie_name LIKE "%${movie}%"`
       } else if (scheduleDate) {
-        queryCondition = `schedule_date LIKE "%${scheduleDate}%"`
+        queryCondition = `schedule.schedule_date LIKE "%${scheduleDate}%"`
       } else if (premiereLocation) {
-        queryCondition = `premiere_location_city LIKE "%${premiereLocation}%`
+        queryCondition = `premiere_location.premiere_location_city LIKE "%${premiereLocation}%"`
       } else if (movie) {
-        queryCondition = `movie_name LIKE "%${movie}%"`
+        queryCondition = `movie.movie_name LIKE "%${movie}%"`
       } else {
         if (id) {
-          queryCondition = `cinema.movie_id = ${id} AND cinema_name LIKE "%%"`
+          queryCondition = `cinema.movie_id = ${id} AND cinema.cinema_name LIKE "%%"`
         } else {
-          queryCondition = 'cinema_name LIKE "%%"'
+          queryCondition = 'cinema.cinema_name LIKE "%%"'
         }
       }
 
@@ -61,6 +61,7 @@ module.exports = {
         pageInfo
       )
     } catch (error) {
+      console.log(error)
       return helper.response(res, 404, 'Bad Request', null)
     }
   },
@@ -91,7 +92,8 @@ module.exports = {
         cinemaPrice,
         scheduleDateStart,
         scheduleDateEnd,
-        scheduleDateClock = ['08:30:00', '10:00:00', '14:00:00', '18:00:00']
+        scheduleDateClock = ['08:30:00', '10:00:00', '14:00:00', '18:00:00'],
+        scheduleLocation
       } = req.body
       const setDataCinema = {
         movie_id: movieId,
@@ -105,17 +107,19 @@ module.exports = {
         ...resultCinema,
         schedule_date_start: scheduleDateStart,
         schedule_date_end: scheduleDateEnd,
-        scheduleClock: scheduleDateClock
+        scheduleDateClock: scheduleDateClock,
+        schedule_location: scheduleLocation
       }
 
       const cinemaId = resultCinema.id
 
-      await scheduleDateClock.foreach((element) => {
+      await scheduleDateClock.forEach((element) => {
         const setDataSchedule = {
           cinema_id: cinemaId,
           schedule_date_start: scheduleDateStart,
           schedule_date_end: scheduleDateEnd,
-          schedule_clock: element
+          schedule_clock: element,
+          schedule_location: scheduleLocation
         }
         scheduleModel.createScheduleData(setDataSchedule)
       })
@@ -127,6 +131,7 @@ module.exports = {
         newResultCinema
       )
     } catch (error) {
+      console.log(error)
       return helper.response(res, 404, 'Bad Request', null)
     }
   },
@@ -138,7 +143,8 @@ module.exports = {
         movie_id: movieId,
         premiere_location_id: premiereId,
         cinema_name: cinemaName,
-        cinema_price: cinemaPrice
+        cinema_price: cinemaPrice,
+        updated_at: new Date(Date.now())
       }
       const result = await cinemaModel.getDataCinemaById(id)
       if (result.length > 0) {

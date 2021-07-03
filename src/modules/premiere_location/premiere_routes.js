@@ -1,59 +1,40 @@
 const express = require('express')
 const router = express.Router()
-const movieController = require('./movie_controller')
+const premiereController = require('./premiere_controller')
 const authMiddleware = require('../../middleware/auth')
-const uploadImage = require('../../middleware/upload')
 const redisMiddleware = require('../../middleware/redis')
 
-// Movie Page Website
+// Premiere Location
 router.get(
   '/',
   authMiddleware.userAuthentication,
-  redisMiddleware.getAllMovieDataRedis,
-  movieController.getAllMovieData
+  premiereController.getAllPremiereLocation
 )
 router.get(
   '/:id',
   authMiddleware.userAuthentication,
-  redisMiddleware.getOneMovieDataRedis,
-  movieController.getOneMovieData
+  premiereController.getOnePremiereLocation
 )
-
-router.get(
-  '/search-movie/search',
-  authMiddleware.userAuthentication,
-  movieController.searchMovieData
-)
-
-router.get(
-  '/upcoming-movie/:month',
-  authMiddleware.userAuthentication,
-  movieController.getUpcomingMovieDataByMonth
-)
-
 router.post(
   '/admin',
   authMiddleware.userAuthentication,
   authMiddleware.isAdmin,
-  uploadImage,
   redisMiddleware.clearMovieDataRedis,
-  movieController.createNewMovieData
+  premiereController.createPremiereLocation
 )
 router.patch(
   '/admin/:id',
   authMiddleware.userAuthentication,
   authMiddleware.isAdmin,
-  uploadImage,
   redisMiddleware.clearMovieDataRedis,
-  movieController.updateOneMovieData
+  premiereController.updatePremiereLocation
 )
 router.delete(
   '/admin/:id',
   authMiddleware.userAuthentication,
   authMiddleware.isAdmin,
-  uploadImage,
   redisMiddleware.clearMovieDataRedis,
-  movieController.deleteOneMovieData
+  premiereController.deletePremiereLocation
 )
 
 module.exports = router

@@ -169,27 +169,32 @@ module.exports = {
       return helper.response(res, 404, 'Bad Request', null)
     }
   },
-  searchNameMovieData: async (req, res) => {
+
+  searchMovieData: async (req, res) => {
     try {
-      // console.log(req.query)
-      const { searchResult, sort, page, limit } = req.query
-      const page1 = parseInt(page)
-      const limit1 = parseInt(limit)
-      const totalData = await movieModel.getDataCount()
-      const totalPage = Math.ceil(totalData / limit1)
-      const offset = page1 * limit1 - limit1
+      let { searchResult, sort, page, limit } = req.query
+
+      searchResult = searchResult ? searchResult : ''
+      sort = sort ? sort : 'movie_id DESC'
+      page = page ? parseInt(page) : 1
+      limit = limit ? parseInt(limit) : 5
+
+      const totalData = await movieModel.getDataCount(searchResult)
+      const totalPage = Math.ceil(totalData / limit)
+      const offset = page * limit - limit
       const pageInfo = {
-        page1,
+        page,
         totalPage,
-        limit1,
+        limit,
         totalData
       }
       const result = await movieModel.searchDataName(
         searchResult,
         sort,
-        limit1,
+        limit,
         offset
       )
+
       if (result.length > 0) {
         return helper.response(
           res,
@@ -199,17 +204,13 @@ module.exports = {
           pageInfo
         )
       } else {
-        return helper.response(
-          res,
-          400,
-          'Your search result is not found. Please try again.',
-          null
-        )
+        return helper.response(res, 400, 'the search data is no result.', null)
       }
     } catch (error) {
       return helper.response(res, 404, 'Bad Request', null)
     }
   },
+
   getUpcomingMovieDataByMonth: async (req, res) => {
     try {
       let { month, limit } = req.params
@@ -225,7 +226,12 @@ module.exports = {
           null
         )
       } else {
-        return helper.response(res, 400)
+        return helper.response(
+          res,
+          400,
+          'getting data for upcoming movie is failed. Please try again.',
+          null
+        )
       }
     } catch (error) {
       return helper.response(res, 404, 'Bad Request', null)

@@ -12,10 +12,10 @@ module.exports = {
       })
     })
   },
-  getDataCount: () => {
+  getDataCount: (searchResult) => {
     return new Promise((resolve, reject) => {
       connection.query(
-        'SELECT COUNT(*) AS total FROM movie',
+        `SELECT COUNT(*) AS total FROM movie WHERE movie_name LIKE '%${searchResult}%'`,
         (error, result) => {
           if (!error) {
             resolve(result[0].total)
@@ -26,6 +26,7 @@ module.exports = {
       )
     })
   },
+
   getOneData: (id) => {
     return new Promise((resolve, reject) => {
       connection.query(
@@ -41,6 +42,7 @@ module.exports = {
       )
     })
   },
+
   createNewData: (setData) => {
     return new Promise((resolve, reject) => {
       connection.query('INSERT INTO movie SET ?', setData, (error, result) => {
@@ -99,8 +101,8 @@ module.exports = {
   searchDataName: (searchResult, sort, limit, offset) => {
     return new Promise((resolve, reject) => {
       connection.query(
-        `SELECT * FROM movie WHERE movie_name LIKE "%"?"%" ORDER BY ${sort} LIMIT ? OFFSET ?`,
-        [searchResult, limit, offset],
+        `SELECT * FROM movie WHERE movie_name LIKE '%${searchResult}%' ORDER BY ${sort} LIMIT ? OFFSET ?`,
+        [limit, offset],
         (error, result) => {
           if (!error) {
             resolve(result)

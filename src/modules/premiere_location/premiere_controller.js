@@ -58,7 +58,8 @@ module.exports = {
       const { premiereLocationCity, premiereLocationAddress } = req.body
       const setData = {
         premiere_location_city: premiereLocationCity,
-        premiere_location_address: premiereLocationAddress
+        premiere_location_address: premiereLocationAddress,
+        updated_at: new Date(Date.now())
       }
       if (result.length > 0) {
         const newResult = await premiereModel.updateDataPremiere(setData, id)

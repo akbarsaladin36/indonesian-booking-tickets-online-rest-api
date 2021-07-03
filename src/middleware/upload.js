@@ -27,7 +27,7 @@ const upload = multer({
   storage,
   fileFilter,
   limits: { fileSize: maxSize }
-}).single('movieImage')
+}).single('imageFile')
 
 const uploadFilter = (req, res, next) => {
   upload(req, res, function (err) {

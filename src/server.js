@@ -20,9 +20,9 @@ app.use(cors())
 app.options('*', cors())
 dotenv.config({ path: '../.env' })
 
-app.use('backend1/api/v1', routerNavigation)
-app.use('backend1/api', express.static('src/uploads'))
+app.use('/backend1/api/v1', routerNavigation)
+app.use('/backend1/api', express.static('src/uploads'))
 
 app.listen(port, () => {
-  console.log('Server is listening at port 3001.')
+  console.log(`Server is listening at port ${port}`)
 })
