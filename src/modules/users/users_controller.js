@@ -39,16 +39,10 @@ module.exports = {
   updateUserAccount: async (req, res) => {
     try {
       const { id } = req.params
-      const {
-        userEmail,
-        userName,
-        userFirstName,
-        userLastName,
-        userPhoneNumber
-      } = req.body
+      const { userEmail, userFirstName, userLastName, userPhoneNumber } =
+        req.body
       const setData = {
         user_account_email: userEmail,
-        user_account_username: userName,
         user_account_first_name: userFirstName,
         user_account_last_name: userLastName,
         user_account_phone_number: userPhoneNumber,

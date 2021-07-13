@@ -23,7 +23,7 @@ This is the API that i created for Tickitz Booking Ticket app. This API is teste
 5. Create a database with the name #nama_database, and Import file sql to **phpmyadmin**
 6. Open Postman desktop application or Chrome web app extension that has installed before
 7. Choose HTTP Method and enter request url.(ex. localhost:3000/)
-8. You can see all the end point [here](https://documenter.getpostman.com/view/14780095/TzRLmqcs)
+8. You can see all the end point [here](https://documenter.getpostman.com/view/14780095/Tzm6nc1o)
 9. Type `npm run dev` to activated the server.
 
 ## Set up .env file

@@ -1,70 +1,67 @@
 const helper = require('../../helpers/wrapper')
 const cinemaModel = require('./cinema_model')
-const scheduleModel = require('../schedule/schedule_model')
 
 module.exports = {
   getAllCinema: async (req, res) => {
     try {
-      const { id } = req.params
-      let {
-        scheduleDate = '',
-        premiereLocation = '',
-        movie = '',
-        order = 'cinema_id ASC',
-        page = '1',
-        limit = '100'
-      } = req.query
-
-      let queryCondition
-      if (premiereLocation && movie) {
-        queryCondition = `premiere_location.premiere_location_city LIKE "%${premiereLocation}%" AND movie.movie_name LIKE "%${movie}%"`
-      } else if (scheduleDate) {
-        queryCondition = `schedule.schedule_date LIKE "%${scheduleDate}%"`
-      } else if (premiereLocation) {
-        queryCondition = `premiere_location.premiere_location_city LIKE "%${premiereLocation}%"`
-      } else if (movie) {
-        queryCondition = `movie.movie_name LIKE "%${movie}%"`
-      } else {
-        if (id) {
-          queryCondition = `cinema.movie_id = ${id} AND cinema.cinema_name LIKE "%%"`
-        } else {
-          queryCondition = 'cinema.cinema_name LIKE "%%"'
-        }
-      }
-
-      page = parseInt(page)
-      limit = parseInt(limit)
-      let offset = 0
-      offset = page * limit - limit
-      const totalData = await cinemaModel.getDataCount(queryCondition)
-      const totalPage = Math.ceil(totalData / limit)
-      const pageInfo = { page, totalPage, limit, totalData, offset }
-      const result = await cinemaModel.getDataCinema(
-        queryCondition,
-        order,
-        limit,
-        offset
-      )
-      for (const cinema of result) {
-        const fromSchedule = await scheduleModel.getDataCinemaById(
-          cinema.cinema_id
-        )
-        cinema.schedule_clock = fromSchedule.map(
-          (schedule) => schedule.schedule_clock
-        )
-      }
-      return helper.response(
-        res,
-        200,
-        'Success get all of data cinema',
-        result,
-        pageInfo
-      )
+      const result = await cinemaModel.getDataCinema()
+      return helper.response(res, 200, 'Get All Cinema Data.', result)
     } catch (error) {
       console.log(error)
       return helper.response(res, 404, 'Bad Request', null)
     }
   },
+
+  getCinemaByMovieId: async (req, res) => {
+    try {
+      let { movieId, location, date, sort, limit, page } = req.query
+
+      location = location || '%%'
+      date = date || '%%'
+      sort = sort || 'c.cinema_name ASC'
+      limit = limit || '6'
+      page = page || '1'
+
+      page = parseInt(page)
+      limit = parseInt(limit)
+      const offset = page * limit - limit
+      const totalData = await cinemaModel.getDataCinemaCount(
+        movieId,
+        location,
+        sort
+      )
+      const totalPage = Math.ceil(totalData / limit)
+      const pageInfo = {
+        page,
+        totalPage,
+        limit,
+        totalData
+      }
+      const result = await cinemaModel.getDataCinemaByMovieId(
+        movieId,
+        location,
+        sort,
+        limit,
+        offset
+      )
+      for (const s of result) {
+        s.schedule = await cinemaModel.getDataScheduleByCinemaId(
+          s.cinema_id,
+          date
+        )
+      }
+      return helper.response(
+        res,
+        200,
+        `Success get Cinema By Movie Id ${movieId}`,
+        result,
+        pageInfo
+      )
+    } catch (error) {
+      return helper.response(res, 404, 'Bad Request', null)
+    }
+  },
+
   getOneCinema: async (req, res) => {
     try {
       const { id } = req.params
@@ -85,16 +82,7 @@ module.exports = {
   },
   createCinemaData: async (req, res) => {
     try {
-      const {
-        movieId,
-        premiereId,
-        cinemaName,
-        cinemaPrice,
-        scheduleDateStart,
-        scheduleDateEnd,
-        scheduleDateClock = ['08:30:00', '10:00:00', '14:00:00', '18:00:00'],
-        scheduleLocation
-      } = req.body
+      const { movieId, premiereId, cinemaName, cinemaPrice } = req.body
       const setDataCinema = {
         movie_id: movieId,
         premiere_location_id: premiereId,
@@ -103,32 +91,11 @@ module.exports = {
       }
       const resultCinema = await cinemaModel.createDataCinema(setDataCinema)
 
-      const newResultCinema = {
-        ...resultCinema,
-        schedule_date_start: scheduleDateStart,
-        schedule_date_end: scheduleDateEnd,
-        scheduleDateClock: scheduleDateClock,
-        schedule_location: scheduleLocation
-      }
-
-      const cinemaId = resultCinema.id
-
-      await scheduleDateClock.forEach((element) => {
-        const setDataSchedule = {
-          cinema_id: cinemaId,
-          schedule_date_start: scheduleDateStart,
-          schedule_date_end: scheduleDateEnd,
-          schedule_clock: element,
-          schedule_location: scheduleLocation
-        }
-        scheduleModel.createScheduleData(setDataSchedule)
-      })
-
       return helper.response(
         res,
         200,
         'Cinema data is successfully created.',
-        newResultCinema
+        resultCinema
       )
     } catch (error) {
       console.log(error)

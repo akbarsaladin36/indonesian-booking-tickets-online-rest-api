@@ -15,6 +15,23 @@ module.exports = {
       )
     })
   },
+
+  getDataBookingById: (cinemaId, scheduleId) => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        'SELECT b.booking_id, b.cinema_id, b.schedule_id, bs.booking_seat_location FROM booking b JOIN booking_seat bs ON b.booking_id = bs.booking_id WHERE b.cinema_id = ? AND b.schedule_id = ? AND b.booking_status = ?',
+        [cinemaId, scheduleId, 'Y'],
+        (error, result) => {
+          if (!error) {
+            resolve(result)
+          } else {
+            reject(new Error(error))
+          }
+        }
+      )
+    })
+  },
+
   createDataBooking: (setData) => {
     return new Promise((resolve, reject) => {
       connection.query(
@@ -34,6 +51,7 @@ module.exports = {
       )
     })
   },
+
   createDataBookingSeat: (setBookingSeat) => {
     return new Promise((resolve, reject) => {
       connection.query(

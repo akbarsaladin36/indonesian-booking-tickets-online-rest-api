@@ -16,6 +16,13 @@ router.get(
   authMiddleware.userAuthentication,
   cinemaController.getOneCinema
 )
+
+router.get(
+  '/cinema-movie/get',
+  authMiddleware.userAuthentication,
+  cinemaController.getCinemaByMovieId
+)
+
 router.post(
   '/admin',
   authMiddleware.userAuthentication,

@@ -1,6 +1,5 @@
 const helper = require('../../helpers/wrapper')
 const scheduleModel = require('./schedule_model')
-// const cinemaModel = require('../cinema/cinema_model')
 
 module.exports = {
   getAllSchedule: async (req, res) => {
@@ -31,17 +30,11 @@ module.exports = {
   },
   createSchedule: async (req, res) => {
     try {
-      const {
-        cinemaId,
-        scheduleDateStart,
-        scheduleDateEnd,
-        scheduleClock,
-        scheduleLocation
-      } = req.body
+      const { cinemaId, scheduleDate, scheduleClock, scheduleLocation } =
+        req.body
       const setData = {
         cinema_id: cinemaId,
-        schedule_date_start: scheduleDateStart,
-        schedule_date_end: scheduleDateEnd,
+        schedule_date: scheduleDate,
         schedule_clock: scheduleClock,
         schedule_location: scheduleLocation
       }
@@ -59,17 +52,11 @@ module.exports = {
   updateSchedule: async (req, res) => {
     try {
       const { id } = req.params
-      const {
-        cinemaId,
-        scheduleDateStart,
-        scheduleDateEnd,
-        scheduleClock,
-        scheduleLocation
-      } = req.body
+      const { cinemaId, scheduleDate, scheduleClock, scheduleLocation } =
+        req.body
       const setData = {
         cinema_id: cinemaId,
-        schedule_date_start: scheduleDateStart,
-        schedule_date_end: scheduleDateEnd,
+        schedule_date: scheduleDate,
         schedule_clock: scheduleClock,
         schedule_location: scheduleLocation
       }

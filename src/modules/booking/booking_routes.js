@@ -5,6 +5,11 @@ const authMiddleware = require('../../middleware/auth')
 
 // Booking
 router.get('/', authMiddleware.userAuthentication, bookingController.getBooking)
+router.get(
+  '/get-booking',
+  authMiddleware.userAuthentication,
+  bookingController.getBookingById
+)
 router.post(
   '/',
   authMiddleware.userAuthentication,

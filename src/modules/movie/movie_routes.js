@@ -43,10 +43,19 @@ router.patch(
   '/admin/:id',
   authMiddleware.userAuthentication,
   authMiddleware.isAdmin,
-  uploadImage,
   redisMiddleware.clearMovieDataRedis,
   movieController.updateOneMovieData
 )
+
+router.patch(
+  '/admin/img/:id',
+  authMiddleware.userAuthentication,
+  authMiddleware.isAdmin,
+  uploadImage,
+  redisMiddleware.clearMovieDataRedis,
+  movieController.updateMovieImage
+)
+
 router.delete(
   '/admin/:id',
   authMiddleware.userAuthentication,
